@@ -23,8 +23,8 @@ jobs:
           # l10n_branch is the branch Crowdin opens its PR from. develop keeps
           # the name the old GitHub integration used, so PR history stays under
           # one head branch. A new branch here needs its own explicit name.
-          - branch: develop
-            l10n_branch: l10n_develop2
+          - branch: sprint1/completo
+            l10n_branch: l10n_sprint1_completo
 
     steps:
       - name: Checkout ${{ matrix.branch }}
