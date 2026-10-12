@@ -1,5 +1,5 @@
 <template>
-	<div class="p-3 h-full">
+	<div class="course-outline p-3 h-full">
 		<div
 			v-if="!hideHeader && title && (outline.data?.length || allowEdit)"
 			class="flex items-center justify-between gap-x-2 mb-4 px-2"
@@ -18,7 +18,7 @@
 				<template #prefix>
 					<span class="lucide-plus size-4" />
 				</template>
-				{{ __('Add') }}
+				{{ __('Agregar módulo') }}
 			</Button>
 		</div>
 		<div
@@ -26,12 +26,12 @@
 			class="flex flex-col items-center justify-center gap-3 px-6 py-16 text-center text-ink-gray-6 h-full"
 		>
 			<span class="lucide-book-open size-8" />
-			<div class="text-sm">{{ __('No chapters yet') }}</div>
+			<div class="text-sm">{{ __('Aún no hay módulos.') }}</div>
 			<Button @click="openChapterForm()">
 				<template #prefix>
 					<span class="lucide-plus size-4" />
 				</template>
-				{{ __('Create chapter') }}
+				{{ __('Crear módulo') }}
 			</Button>
 		</div>
 		<div
@@ -192,7 +192,7 @@ const deleteLesson = createResource({
 	},
 	onSuccess() {
 		outline.reload()
-		toast.success(__('Lesson deleted successfully'))
+		toast.success(__('Lección eliminada correctamente'))
 	},
 	onError(err: FrappeResourceError) {
 		toast.error(resourceErrorMessage(err, __('Error')))
@@ -211,7 +211,7 @@ const updateLessonIndex = createResource({
 	},
 	onSuccess() {
 		outline.reload()
-		toast.success(__('Lesson moved successfully'))
+		toast.success(__('Lección movida correctamente'))
 	},
 })
 
@@ -222,7 +222,7 @@ const updateChapterIndex = createResource({
 	},
 	onSuccess() {
 		outline.reload()
-		toast.success(__('Chapter moved successfully'))
+		toast.success(__('Módulo movido correctamente'))
 	},
 })
 
@@ -233,7 +233,7 @@ const deleteChapter = createResource({
 	},
 	onSuccess() {
 		outline.reload()
-		toast.success(__('Chapter deleted successfully'))
+		toast.success(__('Módulo eliminado correctamente'))
 	},
 	onError(err: FrappeResourceError) {
 		toast.error(resourceErrorMessage(err, __('Error')))
@@ -253,7 +253,7 @@ const renameChapterResource = createResource({
 	},
 	onSuccess() {
 		outline.reload()
-		toast.success(__('Chapter renamed successfully'))
+		toast.success(__('Módulo renombrado correctamente'))
 	},
 	onError(err: FrappeResourceError) {
 		outline.reload()
@@ -267,13 +267,13 @@ function renameChapter(payload: { chapter: OutlineChapter; title: string }) {
 
 function trashLesson(lessonName: string, chapterName: string) {
 	$dialog({
-		title: __('Delete this lesson?'),
+		title: __('¿Eliminar esta lección?'),
 		message: __(
-			'Deleting this lesson will permanently remove it from the course. This action cannot be undone. Are you sure you want to continue?'
+			'La lección se eliminará permanentemente del curso. Esta acción no se puede deshacer. ¿Quieres continuar?'
 		),
 		actions: [
 			{
-				label: __('Delete'),
+				label: __('Eliminar'),
 				theme: 'red',
 				variant: 'solid',
 				onClick({ close }) {
@@ -293,13 +293,13 @@ function trashLesson(lessonName: string, chapterName: string) {
 
 function trashChapter(chapterName: string) {
 	$dialog({
-		title: __('Delete this chapter?'),
+		title: __('¿Eliminar este módulo?'),
 		message: __(
-			'Deleting this chapter will also delete all its lessons and permanently remove it from the course. This action cannot be undone. Are you sure you want to continue?'
+			'El módulo y todas sus lecciones se eliminarán permanentemente del curso. Esta acción no se puede deshacer. ¿Quieres continuar?'
 		),
 		actions: [
 			{
-				label: __('Delete'),
+				label: __('Eliminar'),
 				theme: 'red',
 				variant: 'solid',
 				onClick({ close }) {
@@ -353,3 +353,27 @@ function updateChapterOrder(e: DraggableEvent) {
 	})
 }
 </script>
+
+<style scoped>
+.course-outline {
+	background: #fbfcfa;
+}
+
+.course-outline :deep(.chapter-item) {
+	margin-bottom: 0.35rem;
+	border: 1px solid #e5ece6;
+	border-radius: 0.75rem;
+	background: #fff;
+	transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.course-outline :deep(.chapter-item:hover) {
+	border-color: #cbded1;
+	box-shadow: 0 4px 14px rgba(24, 49, 46, 0.05);
+}
+
+.course-outline :deep([data-testid='outline-lesson']) {
+	border-radius: 0.6rem;
+	transition: background-color 150ms ease;
+}
+</style>

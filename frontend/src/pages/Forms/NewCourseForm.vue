@@ -1,21 +1,22 @@
 <template>
-	<FormShell :title="__('New Course')" size="3xl" @close="close">
+	<FormShell :title="__('Nuevo curso')" size="3xl" @close="close">
 		<template #default>
 			<div v-if="!canCreate" class="p-4 text-base text-ink-gray-6">
-				{{ __('You are not permitted to create a course.') }}
+				{{ __('No tienes permiso para crear cursos.') }}
 			</div>
 			<div v-else data-testid="new-course-fields" class="text-base">
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-5 border-b pb-5 mb-5">
 					<FormControl
 						v-model="course.title"
-						:label="__('Title')"
+						:label="__('Título')"
 						:required="true"
 						autocomplete="off"
 					/>
 					<Link
 						v-model="course.category"
 						doctype="LMS Category"
-						:label="__('Category')"
+						:placeholder="__('Selecciona una categoría')"
+						:label="__('Categoría')"
 						:inlineCreate="true"
 						:onCreate="createCategory"
 					/>
@@ -27,8 +28,8 @@
 						:searchParams="{ roles: JSON.stringify(INSTRUCTOR_ROLES) }"
 						:transform="transformUsers"
 						:extraOptions="resolvedSelected"
-						:label="__('Instructors')"
-						:placeholder="__('Select instructors')"
+						:label="__('Instructores')"
+						:placeholder="__('Selecciona los instructores')"
 						:required="true"
 						:onCreate="openMemberModal"
 					>
@@ -67,7 +68,7 @@
 					</MultiLink>
 					<Uploader
 						v-model="course.image"
-						:label="__('Course thumbnail')"
+						:label="__('Imagen de portada del curso')"
 						:required="false"
 						:description="thumbnailGuidelines"
 					/>
@@ -75,7 +76,7 @@
 				<div class="space-y-4">
 					<FormControl
 						v-model="course.short_introduction"
-						:label="__('Short introduction')"
+						:label="__('Introducción breve')"
 						type="textarea"
 						:required="true"
 					/>
@@ -83,7 +84,7 @@
 						<InputLabel
 							:id="descriptionLabelId"
 							:for-id="descriptionId"
-							:label="__('Course description')"
+							:label="__('Descripción del curso')"
 							:required="true"
 						/>
 						<RichTextEditor
@@ -104,7 +105,7 @@
 			<div v-if="canCreate" class="flex items-center justify-end">
 				<HeaderButton
 					data-testid="new-course-save"
-					:label="__('Save')"
+					:label="__('Guardar')"
 					variant="solid"
 					:loading="courses.insert.loading"
 					@click="saveCourse()"
@@ -216,7 +217,7 @@ const course = ref<Course>({
 const INSTRUCTOR_ROLES = ['Course Creator', 'Batch Evaluator']
 const MAX_VISIBLE_AVATARS = 3
 const thumbnailGuidelines = __(
-	'Upload a 750×422 image (.jpg, .jpeg, .gif, or .png). Shown on the catalog card and lesson hero.'
+	'Sube una imagen de 750 × 422 píxeles (.jpg, .jpeg, .gif o .png). Se mostrará en la tarjeta del catálogo y en la portada de la lección.'
 )
 const { inputId: descriptionId, labelId: descriptionLabelId } =
 	useInputLabeling({})
@@ -334,7 +335,7 @@ const saveCourse = () => {
 		},
 		{
 			onSuccess(data: any) {
-				toast.success(__('Course created successfully'))
+				toast.success(__('Curso creado correctamente.'))
 				capture('course_created')
 				courseCreated.value = true
 				// replace, not push: the form's history entry is consumed so Back

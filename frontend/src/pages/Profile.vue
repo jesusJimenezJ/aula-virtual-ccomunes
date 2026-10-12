@@ -134,7 +134,7 @@ const coverImage = createResource({
 
 const setActiveTab = () => {
 	let fragments = route.path.split('/')
-	let sections = ['certificates', 'roles', 'slots', 'schedule']
+	let sections = ['roles', 'slots', 'schedule']
 	sections.forEach((section) => {
 		if (fragments.includes(section)) {
 			activeTab.value = convertToTitleCase(section)
@@ -150,7 +150,6 @@ watchEffect(() => {
 	if (!activeTab.value || route.name === 'ProfileEditForm') return
 	let target = {
 		About: { name: 'ProfileAbout' },
-		Certificates: { name: 'ProfileCertificates' },
 		Roles: { name: 'ProfileRoles' },
 		Slots: { name: 'ProfileEvaluator' },
 		Schedule: { name: 'ProfileEvaluationSchedule' },
@@ -195,7 +194,6 @@ const isEvaluatorOrModerator = () => {
 const getTabButtons = () => {
 	let buttons = [
 		{ label: __('About'), value: 'About' },
-		{ label: __('Certificates'), value: 'Certificates' },
 	]
 	if ($user.data?.is_moderator) {
 		buttons.push({ label: __('Roles'), value: 'Roles' })

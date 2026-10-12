@@ -46,7 +46,7 @@
 				<div
 					class="uppercase text-ink-gray-6 text-xs-semibold tracking-wider mb-3"
 				>
-					{{ __('Also teaching') }}
+					{{ __('También enseñan') }}
 				</div>
 				<div class="flex items-center gap-2 min-w-0">
 					<div class="flex items-center shrink-0">
@@ -63,7 +63,7 @@
 						<button
 							v-if="hiddenPeerCount > 0"
 							type="button"
-							:aria-label="__('Show more instructors')"
+							:aria-label="__('Mostrar más instructores')"
 							class="-ms-1.5 flex items-center justify-center size-6 rounded-full bg-surface-gray-3 text-xs-medium text-ink-gray-7 hover:bg-surface-gray-4 transition"
 							@click="expanded = true"
 						>
@@ -136,9 +136,9 @@ const hiddenPeerCount = computed<number>(() =>
 
 const headerLabel = computed<string>(() => {
 	const n = props.instructors?.length || 0
-	if (n <= 1) return __('Course creator')
-	if (n <= 4) return __('Taught by')
-	return __('Taught by a team of {0}').format(String(n))
+	if (n <= 1) return __('Creado por')
+	if (n <= 4) return __('Impartido por')
+	return __('Impartido por un equipo de {0}').format(String(n))
 })
 
 function hasBio(bio?: string | null): boolean {

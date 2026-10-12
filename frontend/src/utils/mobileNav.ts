@@ -13,10 +13,8 @@ export interface NavLink {
 // Primaries are picked out of the admin-configured sidebar links, so disabling
 // a link in settings drops its tab too.
 export const PRIMARY_LABELS: readonly string[] = [
-	'Home',
-	'Courses',
-	'Batches',
-	'Programs',
+	'Inicio',
+	'Cursos',
 ]
 
 // Hardcoded rather than matched against `sidebarLinks`, which arrive
@@ -25,28 +23,10 @@ export const PRIMARY_LABELS: readonly string[] = [
 // `pickPrimaryTabs` still hides any the admin has switched off.
 export const GUEST_TABS: readonly NavLink[] = [
 	{
-		label: 'Courses',
+		label: 'Cursos',
 		icon: 'BookOpen',
 		to: 'Courses',
 		activeFor: ['Courses', 'CourseDetail', 'Lesson'],
-	},
-	{
-		label: 'Batches',
-		icon: 'Users',
-		to: 'Batches',
-		activeFor: ['Batches', 'BatchDetail'],
-	},
-	{
-		label: 'Jobs',
-		icon: 'Briefcase',
-		to: 'Jobs',
-		activeFor: ['Jobs', 'JobDetail'],
-	},
-	{
-		label: 'Statistics',
-		icon: 'TrendingUp',
-		to: 'Statistics',
-		activeFor: ['Statistics'],
 	},
 	// No route: it leaves the SPA, so MobileLayout sends this one to Frappe's
 	// server-rendered /login rather than through vue-router.
@@ -64,10 +44,8 @@ const YOU_TAB: NavLink = {
 	avatar: true,
 }
 
-// Five slots: the four PRIMARY_LABELS plus YOU_TAB. A ceiling on the whole bar,
-// and YOU_TAB is pushed last, so a fifth primary would cost the You tab its
-// place — widen this and the column widths together, or not at all.
-const MAX_PRIMARY_TABS = 5
+// Three slots: Inicio, Cursos, and the user's account tab.
+const MAX_PRIMARY_TABS = 3
 
 const SECTION_MAP: Record<string, readonly string[]> = {
 	LEARN: [

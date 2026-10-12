@@ -12,7 +12,7 @@
 				>
 					<span class="lucide-book-open size-8" />
 					<div>
-						{{ __('Select a lesson on the right to start editing.') }}
+						{{ __('Selecciona una lección a la derecha para comenzar a editar.') }}
 					</div>
 				</div>
 				<LessonForm
@@ -38,7 +38,7 @@
 				v-else-if="props.course?.data"
 				ref="courseOutlineRef"
 				:courseName="props.course.data.name"
-				:title="__('Chapters')"
+				:title="__('Módulos')"
 				:allowEdit="true"
 				:hideHeader="true"
 				:inlineSelect="true"
@@ -53,9 +53,9 @@
 		<BottomSheet v-if="isMobile" v-model="showChapters">
 			<template #header>
 				<div class="text-p-lg-semibold text-ink-gray-9">
-					{{ __('Chapters') }}
+					{{ __('Módulos') }}
 				</div>
-				<Button :label="__('Add chapter')" @click="openAddChapter">
+				<Button :label="__('Agregar módulo')" @click="openAddChapter">
 					<template #icon>
 						<span class="lucide-plus size-4" />
 					</template>
@@ -65,7 +65,7 @@
 				v-if="props.course?.data"
 				ref="courseOutlineRef"
 				:courseName="props.course.data.name"
-				:title="__('Chapters')"
+				:title="__('Módulos')"
 				:allowEdit="true"
 				:hideHeader="true"
 				:inlineSelect="true"

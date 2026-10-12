@@ -2126,5 +2126,25 @@
   "translatable": 1,
   "unique": 0,
   "width": null
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "LMS Course-syllabus_pdf",
+  "dt": "LMS Course",
+  "fieldname": "syllabus_pdf",
+  "label": "Syllabus PDF",
+  "fieldtype": "Attach",
+  "insert_after": "published",
+  "module": "LMS"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "LMS Course-schedule_pdf",
+  "dt": "LMS Course",
+  "fieldname": "schedule_pdf",
+  "label": "Schedule PDF",
+  "fieldtype": "Attach",
+  "insert_after": "syllabus_pdf",
+  "module": "LMS"
  }
 ]

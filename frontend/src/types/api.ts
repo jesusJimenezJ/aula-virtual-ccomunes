@@ -136,7 +136,6 @@ export interface CourseFormMeta {
 export interface CourseFormContext {
 	resource: Resource<LMSCourse | null>
 	instructors: Ref<string[]>
-	relatedCourses: Ref<string[]>
 	meta: CourseFormMeta
 	markDirty: () => void
 }

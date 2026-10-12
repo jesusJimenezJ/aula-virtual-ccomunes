@@ -121,7 +121,7 @@ const openCertificate = () => {
 
 const breadcrumbs = computed(() => [
 	{
-		label: __('Courses'),
+		label: __('Cursos'),
 		route: { name: 'Courses' },
 	},
 	{

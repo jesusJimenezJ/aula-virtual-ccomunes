@@ -4,6 +4,7 @@
 			<slot name="actions" />
 		</template>
 	</PageHeader>
+	<slot name="banner" />
 
 	<PageBody :title="title" :selecting="selecting">
 		<template v-if="$slots.name" #name>
@@ -38,6 +39,7 @@
 		<div v-else-if="rows.length && layout === 'grid'" class="px-5 pb-5">
 			<div
 				class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
+				:class="gridClass"
 			>
 				<slot
 					v-for="row in rows"
@@ -150,6 +152,8 @@ const props = withDefaults(
 		totalCount?: number | null
 		/** `grid` hands each row to the #card slot; `list` draws #columns. */
 		layout?: ListPageLayout
+		/** Optional page-specific class for grid layout styling. */
+		gridClass?: string
 		rowKey?: string
 		columns?: ListColumn[]
 		listOptions?: ListViewOptions
@@ -165,6 +169,7 @@ const props = withDefaults(
 		listResource: undefined,
 		totalCount: null,
 		layout: 'grid',
+		gridClass: '',
 		rowKey: 'name',
 		columns: () => [],
 		listOptions: undefined,

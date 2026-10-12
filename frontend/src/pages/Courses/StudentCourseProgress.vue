@@ -1,7 +1,7 @@
 <template>
 	<Dialog
 		v-model:open="show"
-		title="Student Progress"
+		title="Progreso del estudiante"
 		:size="hasAssessmentData ? '4xl' : 'xl'"
 	>
 		<template #default>
@@ -24,10 +24,10 @@
 					</div>
 					<div class="w-25 space-y-2">
 						<div class="text-ink-gray-6 text-sm">
-							{{ Math.round(student.progress) }}% {{ __('completed') }}
+							{{ Math.round(student.progress) }}% {{ __('completado') }}
 						</div>
 						<ProgressBar
-							:label="__('Course Progress')"
+							:label="__('Progreso del curso')"
 							:progress="student.progress"
 						/>
 					</div>
@@ -39,7 +39,7 @@
 						class="border border-outline-elevation-2 rounded-6 px-3 max-h-[60vh] overflow-y-auto"
 					>
 						<div class="sticky top-0 z-10 bg-surface-base py-3 text-ink-gray-6">
-							{{ __('Lesson Progress') }}
+							{{ __('Progreso de lecciones') }}
 						</div>
 						<ul class="list-none">
 							<li
@@ -57,11 +57,11 @@
 								</div>
 								<Tooltip
 									v-if="getLessonStatus(progress) == 'Complete'"
-									:text="__('Complete')"
+							:text="__('Completado')"
 								>
 									<span class="lucide-check text-ink-green-5 size-4" />
 								</Tooltip>
-								<Tooltip v-else :text="__('Pending')">
+				<Tooltip v-else :text="__('Pendiente')">
 									<span class="lucide-minus text-ink-amber-4 size-4" />
 								</Tooltip>
 								<!-- <Badge :theme="getLessonStatusTheme(progress)">
@@ -78,13 +78,13 @@
 						>
 							<div class="grid grid-cols-4 gap-5 text-ink-gray-6 mb-5">
 								<div class="col-span-2">
-									{{ __('Quiz Progress') }}
+								{{ __('Progreso de cuestionarios') }}
 								</div>
 								<div>
-									{{ __('Score') }}
+								{{ __('Puntaje') }}
 								</div>
 								<div>
-									{{ __('Percentage') }}
+								{{ __('Porcentaje') }}
 								</div>
 							</div>
 							<div
@@ -108,7 +108,7 @@
 						>
 							<div>
 								<div class="text-ink-gray-6 mb-5">
-									{{ __('Assignment Progress') }}
+								{{ __('Progreso de tareas') }}
 								</div>
 							</div>
 							<ul class="list-none">
@@ -134,7 +134,7 @@
 						>
 							<div>
 								<div class="text-ink-gray-6 mb-5">
-									{{ __('Programming Exercise Progress') }}
+								{{ __('Progreso de ejercicios de programación') }}
 								</div>
 							</div>
 							<ul class="list-none">
@@ -200,7 +200,7 @@ const assessmentProgress = createResource({
 const getLessonStatus = (lesson: any) => {
 	return (
 		lessonProgress.data?.find((lp: any) => lp.lesson === lesson.lesson)
-			?.status || __('Pending')
+					?.status || __('Pendiente')
 	)
 }
 

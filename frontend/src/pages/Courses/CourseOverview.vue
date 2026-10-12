@@ -1,11 +1,15 @@
 <template>
 	<SkeletonLoader v-if="!course.data" variant="course-page" />
-	<div v-else class="p-5">
+	<div v-else class="course-overview p-5">
 		<div
 			class="flex flex-col md:flex-row items-start justify-between w-full gap-x-8 gap-y-8"
 		>
 			<div class="md:w-2/3 space-y-10 min-w-0">
-				<section class="space-y-4">
+				<section class="course-overview__intro space-y-4">
+					<div v-if="course.data.category" class="course-overview__category">
+						<span class="lucide-sparkles size-4" aria-hidden="true" />
+						{{ course.data.category }}
+					</div>
 					<h1 class="text-4xl-semibold text-ink-gray-9">
 						{{ course.data.title }}
 					</h1>
@@ -25,24 +29,12 @@
 							</router-link>
 							<span class="lucide-dot size-5 text-ink-gray-7" />
 						</template>
-						<template v-if="Number(course.data.rating) > 0">
-							<div class="flex items-center gap-1">
-								<LucideStar class="size-4 text-transparent fill-ink-amber-7" />
-								<span class="font-medium text-ink-gray-9">{{
-									formatRating(course.data.rating)
-								}}</span>
-								<span v-if="course.data.rating_count">
-									({{ formatAmount(course.data.rating_count) }})
-								</span>
-							</div>
-							<span class="lucide-dot size-5 text-ink-gray-7" />
-						</template>
 						<template v-if="course.data.enrollments">
 							<div class="flex items-center gap-1.5">
 								<span class="lucide-users-round size-4" />
 								<span
-									>{{ formatAmount(course.data.enrollments) }}
-									{{ __('Students') }}</span
+								>{{ formatAmount(course.data.enrollments) }}
+									{{ __('estudiantes') }}</span
 								>
 							</div>
 							<span class="lucide-dot size-5 text-ink-gray-7" />
@@ -87,16 +79,16 @@
 					</div>
 				</section>
 
-				<section>
+				<section class="course-overview__panel">
 					<div class="flex items-baseline justify-between gap-4 mb-4">
-						<h2 class="text-3xl-semibold text-ink-gray-9">
-							{{ __('Course content') }}
+					<h2 class="text-3xl-semibold text-ink-gray-9">
+						{{ __('Contenido del curso') }}
 						</h2>
 						<div class="text-base text-ink-gray-6">
 							{{ outlineStats }}
 						</div>
 					</div>
-					<div class="border rounded-5 p-2">
+					<div class="course-overview__outline border rounded-5 p-2">
 						<SkeletonLoader
 							v-if="outline.loading && !outline.data"
 							variant="course-outline"
@@ -107,7 +99,7 @@
 							class="flex items-center justify-center px-4 py-10 text-center"
 						>
 							<span class="text-sm text-ink-gray-6">
-								{{ __('Course content coming soon!') }}
+								{{ __('El contenido de este curso estará disponible pronto.') }}
 							</span>
 						</div>
 						<CourseOutline
@@ -119,9 +111,12 @@
 					</div>
 				</section>
 
-				<section v-if="course.data.description" class="space-y-3">
+				<section
+					v-if="course.data.description"
+					class="course-overview__panel space-y-3"
+				>
 					<h2 class="text-3xl-semibold text-ink-gray-9">
-						{{ __('About this course') }}
+						{{ __('Sobre este curso') }}
 					</h2>
 					<div
 						v-safe-html:rich="course.data.description"
@@ -129,10 +124,9 @@
 					/>
 				</section>
 
-				<CourseReviews
+				<CourseDocuments
 					:courseName="course.data.name"
-					:avg_rating="course.data.rating"
-					:membership="course.data.membership || null"
+					:canManage="isCourseAdmin"
 				/>
 			</div>
 
@@ -143,15 +137,13 @@
 				<CourseCreatorCard :instructors="course.data.instructors || []" />
 			</aside>
 		</div>
-
-		<RelatedCourses :courseName="course.data.name" class="mt-12" />
 	</div>
 </template>
 
 <script setup lang="ts">
 import { computed, inject, watch } from 'vue'
 import { createResource, Badge } from 'frappe-ui'
-import { formatAmount, formatRating } from '@/utils/'
+import { formatAmount } from '@/utils/'
 import type {
 	CourseDetails,
 	OutlineChapter,
@@ -161,11 +153,10 @@ import type {
 import CourseCardOverlay from '@/components/CourseCardOverlay.vue'
 import CourseOutline from '@/components/CourseOutline.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
-import CourseReviews from '@/components/CourseReviews.vue'
 import CourseInstructors from '@/components/CourseInstructors.vue'
 import CourseCreatorCard from '@/components/CourseCreatorCard.vue'
+import CourseDocuments from '@/components/Courses/CourseDocuments.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
-import RelatedCourses from '@/components/RelatedCourses.vue'
 
 const props = defineProps<{
 	course: Resource<CourseDetails | null>
@@ -207,16 +198,10 @@ const outlineStats = computed(() => {
 	)
 	const parts: string[] = []
 	if (chapters.length) {
-		parts.push(
-			`${chapters.length} ${
-				chapters.length === 1 ? __('section') : __('sections')
-			}`
-		)
+		parts.push(`${chapters.length} ${chapters.length === 1 ? 'sección' : 'secciones'}`)
 	}
 	if (lessonCount) {
-		parts.push(
-			`${lessonCount} ${lessonCount === 1 ? __('lesson') : __('lessons')}`
-		)
+		parts.push(`${lessonCount} ${lessonCount === 1 ? 'lección' : 'lecciones'}`)
 	}
 	return parts.join(' · ')
 })
@@ -230,3 +215,75 @@ const hasCourseContent = computed(() => {
 	return chapters.length > 0 && lessonCount > 0
 })
 </script>
+
+<style scoped>
+.course-overview {
+	width: min(100%, 78rem);
+	margin-inline: auto;
+}
+
+.course-overview__intro {
+	position: relative;
+	padding: clamp(1.25rem, 3vw, 2rem);
+	border: 1px solid #dce8e0;
+	border-radius: 1.25rem;
+	background:
+		radial-gradient(circle at 95% 8%, rgba(216, 137, 99, 0.16), transparent 25%),
+		linear-gradient(120deg, #edf5ef 0%, #f8f5ec 100%);
+}
+
+.course-overview__category {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.4rem 0.7rem;
+	border: 1px solid #d0e1d7;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.72);
+	color: #176b60;
+	font-size: 0.75rem;
+	font-weight: 700;
+}
+
+.course-overview__intro h1 {
+	max-width: 52rem;
+	margin-top: 0.4rem;
+	font-size: clamp(1.9rem, 3.3vw, 3rem);
+	letter-spacing: -0.04em;
+	line-height: 1.08;
+}
+
+.course-overview__intro > p {
+	max-width: 48rem;
+	font-size: 1rem;
+	line-height: 1.7;
+}
+
+.course-overview__panel {
+	padding: 1.25rem;
+	border: 1px solid #e2eae4;
+	border-radius: 1.1rem;
+	background: #fff;
+	box-shadow: 0 8px 24px rgba(24, 49, 46, 0.04);
+}
+
+.course-overview__panel h2 {
+	font-size: 1.3rem;
+	letter-spacing: -0.02em;
+}
+
+.course-overview__outline {
+	border-color: #e2eae4;
+	background: #fbfcfa;
+}
+
+@media (max-width: 640px) {
+	.course-overview {
+		padding: 1rem;
+	}
+
+	.course-overview__panel {
+		padding: 1rem;
+	}
+}
+</style>

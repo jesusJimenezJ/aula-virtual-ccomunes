@@ -19,6 +19,30 @@ svg.lucide {
 	--header-frame-h: 3rem;
 }
 
+/* Visual identity for the community psychology learning portal. Keep the
+   palette scoped to the LMS shell so framework overlays and embedded editors
+   retain their own component tokens. */
+.lms-app {
+	--lms-forest: #123f3a;
+	--lms-teal: #176b60;
+	--lms-teal-soft: #e7f2ee;
+	--lms-sand: #f4eee2;
+	--lms-coral: #d98963;
+	--lms-ink: #18312e;
+	--lms-canvas: #f6f8f5;
+	color: var(--lms-ink);
+}
+
+.lms-app main#main-content {
+	background: var(--lms-canvas);
+}
+
+.lms-app .header-frame {
+	background: rgba(255, 255, 255, 0.94);
+	border-color: #e4ebe6;
+	backdrop-filter: blur(12px);
+}
+
 .header-frame {
 	@apply flex shrink-0 items-center border-b border-outline-gray-1 bg-surface-base px-5;
 	min-height: var(--header-frame-h);

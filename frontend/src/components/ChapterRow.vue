@@ -54,7 +54,7 @@
 				<template v-if="isScormChapterLocked">
 					<span
 						class="lucide-lock-keyhole size-4 text-ink-gray-4"
-						:title="__('Complete the previous lessons to unlock this one')"
+						:title="__('Completa las lecciones anteriores para desbloquear este módulo')"
 						aria-hidden="true"
 					/>
 					<span class="sr-only">{{ __('Locked') }}</span>
@@ -66,18 +66,18 @@
 						class="lucide-check size-4 text-ink-green-8"
 						aria-hidden="true"
 					/>
-					<span class="sr-only">{{ __('Completed') }}</span>
+					<span class="sr-only">{{ __('Completado') }}</span>
 				</template>
 			</component>
 			<div v-if="allowEdit" class="flex items-center gap-x-4 shrink-0">
 				<Tooltip
 					v-if="chapter.is_scorm_package"
-					:text="__('Edit Chapter')"
+						:text="__('Editar módulo')"
 					side="bottom"
 				>
 					<Button
 						variant="ghost"
-						:label="__('Edit Chapter')"
+						:label="__('Editar módulo')"
 						class="invisible group-hover:visible group-focus-within:visible [@media(hover:none)]:visible"
 						@click="emit('edit-chapter', chapter)"
 					>
@@ -86,10 +86,10 @@
 						</template>
 					</Button>
 				</Tooltip>
-				<Tooltip :text="__('Delete Chapter')" side="bottom">
+				<Tooltip :text="__('Eliminar módulo')" side="bottom">
 					<Button
 						variant="ghost"
-						:label="__('Delete Chapter')"
+						:label="__('Eliminar módulo')"
 						class="me-2 hidden group-hover:inline-flex group-focus-within:inline-flex [@media(hover:none)]:inline-flex"
 						@click="emit('delete-chapter', chapter.name)"
 					>
@@ -161,7 +161,7 @@
 									<span
 										class="lucide-lock-keyhole h-4 w-4 text-ink-gray-4 ms-2"
 										:title="
-											__('Complete the previous lesson to unlock this one')
+										__('Completa la lección anterior para desbloquear esta')
 										"
 										aria-hidden="true"
 									/>
@@ -172,7 +172,7 @@
 										class="lucide-check h-4 w-4 text-ink-green-8 ms-2"
 										aria-hidden="true"
 									/>
-									<span class="sr-only">{{ __('Completed') }}</span>
+									<span class="sr-only">{{ __('Completado') }}</span>
 								</template>
 							</div>
 						</component>
@@ -180,7 +180,7 @@
 							<Button
 								variant="ghost"
 								size="xs"
-								:label="__('Delete Lesson')"
+								:label="__('Eliminar lección')"
 								class="-my-0.5 invisible group-hover:visible group-focus-within:visible [@media(hover:none)]:visible"
 								@click="
 									emit('delete-lesson', {
@@ -202,14 +202,14 @@
 				class="ps-8 py-2 pe-4 bg-surface-gray-3 rounded-5 text-sm leading-5 text-ink-gray-6"
 				data-testid="outline-draft-lesson"
 			>
-				{{ __('New lesson') }}
+				{{ __('Nueva lección') }}
 			</div>
 			<div v-if="allowEdit" class="flex mt-2 mb-4 ps-8">
 				<Button @click="addLesson">
 					<template #prefix>
 						<span class="lucide-plus size-4" />
 					</template>
-					{{ __('Add Lesson') }}
+					{{ __('Agregar lección') }}
 				</Button>
 			</div>
 		</DisclosurePanel>
@@ -380,7 +380,7 @@ function addLesson() {
 }
 
 function notifyEnrollment(): void {
-	toast.success(__('Please enroll for this course to view this lesson'))
+	toast.success(__('Matricúlate en este curso para ver esta lección'))
 }
 
 // A SCORM chapter has no lessons to disclose, so its header is a link to the

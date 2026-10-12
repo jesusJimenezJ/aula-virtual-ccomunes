@@ -1,25 +1,17 @@
 <template>
 	<div class="p-5">
 		<div
-			class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-5 text-ink-gray-9"
+			class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-5 text-ink-gray-9"
 		>
 			<NumberChartGraph
-				:title="__('Enrolled')"
+				:title="__('Matriculados')"
 				:value="formatAmount(course.data?.enrollments)"
 			/>
 			<NumberChartGraph
-				:title="__('Average Completion Rate')"
+				:title="__('Tasa promedio de finalización')"
 				:value="averageCompletionRate"
 			/>
-			<NumberChartGraph
-				:title="__('Average Rating')"
-				:value="course.data?.rating || 0"
-			>
-				<template #prefix>
-					<LucideStar class="size-5 text-transparent fill-ink-amber-7" />
-				</template>
-			</NumberChartGraph>
-			<NumberChartGraph :title="__('Lessons')" :value="course.data?.lessons" />
+			<NumberChartGraph :title="__('Lecciones')" :value="course.data?.lessons" />
 		</div>
 		<div
 			v-if="showStudentsEmptyState"
@@ -28,10 +20,10 @@
 			<span class="lucide-users size-7.5 text-ink-gray-5" />
 			<div class="flex flex-col items-center gap-1">
 				<span class="text-lg-medium text-ink-gray-8">
-					{{ __('No students enrolled yet') }}
+					{{ __('Aún no hay estudiantes matriculados') }}
 				</span>
 				<span class="text-p-base text-ink-gray-6">
-					{{ __('Enroll students to track their progress here') }}
+					{{ __('Matricula estudiantes para ver su progreso aquí') }}
 				</span>
 			</div>
 		</div>
@@ -42,13 +34,13 @@
 			<div class="border rounded-6 py-3 px-4">
 				<div class="flex items-center justify-between mb-3">
 					<div class="text-lg-semibold text-ink-gray-9">
-						{{ __('Students') }}
+						{{ __('Estudiantes') }}
 					</div>
 					<div class="flex items-center gap-x-2">
 						<FormControl
 							v-model="searchFilter"
-							:placeholder="__('Search')"
-							:aria-label="__('Search students')"
+						:placeholder="__('Buscar')"
+						:aria-label="__('Buscar estudiantes')"
 							type="text"
 						>
 							<template #prefix>
@@ -99,8 +91,8 @@
 						<EmptyStateLayout
 							name="Students"
 							icon="lucide-users"
-							:title="__('No students match your search')"
-							:description="__('Try a different name')"
+						:title="__('No hay estudiantes que coincidan con la búsqueda')"
+							:description="__('Prueba con otro nombre')"
 						/>
 					</div>
 					<div
@@ -108,7 +100,7 @@
 						class="flex justify-center my-3"
 					>
 						<Button @click="progressList.next()">
-							{{ __('Load More') }}
+							{{ __('Cargar más') }}
 						</Button>
 					</div>
 				</div>
@@ -120,7 +112,7 @@
 					class="border rounded-6 p-4"
 				>
 					<div class="text-ink-gray-6 mb-4">
-						{{ __('Progress Summary') }}
+						{{ __('Resumen del progreso') }}
 					</div>
 					<div
 						class="grid grid-cols-1 sm:grid-cols-[2fr_1fr] gap-4 items-center justify-between text-ink-gray-9"
@@ -162,7 +154,7 @@
 				>
 					<div class="flex items-center justify-between mb-4">
 						<div class="text-ink-gray-6">
-							{{ __('Lesson Completion') }}
+							{{ __('Finalización de lecciones') }}
 						</div>
 						<Select
 							:options="lessonProgressSortingOptions"
@@ -170,8 +162,8 @@
 								(value: SelectOptionValue | null) =>
 									value != null && updateLessonProgress(String(value))
 							"
-							:placeholder="__('Sort by')"
-							:aria-label="__('Sort by')"
+							:placeholder="__('Ordenar por')"
+							:aria-label="__('Ordenar por')"
 							class="!w-32"
 						/>
 					</div>
@@ -405,17 +397,17 @@ const ProgressRing = defineComponent({
 const progressColumns = computed<ListColumn[]>(() => {
 	return [
 		{
-			label: __('Name'),
+			label: __('Nombre'),
 			key: 'member_name',
 			width: '40%',
 		},
 		{
-			label: __('Progress'),
+			label: __('Progreso'),
 			key: 'progress',
 			width: '30%',
 		},
 		{
-			label: __('Enrolled On'),
+			label: __('Fecha de matrícula'),
 			key: 'creation',
 			align: 'left',
 		},
@@ -433,14 +425,14 @@ const studentListOptions: ListViewOptions = {
 
 const lessonProgressSortingOptions = [
 	{
-		label: __('Lesson Index'),
+		label: __('Número de lección'),
 		value: 'index',
 		onClick() {
 			updateLessonProgress('index')
 		},
 	},
 	{
-		label: __('Completion Rate'),
+		label: __('Tasa de finalización'),
 		value: 'completion_rate',
 		onClick() {
 			updateLessonProgress('completion_rate')

@@ -3,7 +3,7 @@ import { call } from 'frappe-ui'
 import { usersStore } from './stores/user'
 import { sessionStore } from './stores/session'
 import { useSettings } from './stores/settings'
-import { getLmsBasePath } from './utils/basePath'
+import { getLmsBasePath, getLmsRoute } from './utils/basePath'
 import { routes } from './routes'
 
 // Run the fresh-site-admin persona check at most once per app load.
@@ -54,7 +54,9 @@ export async function guardNavigation(to, from, next) {
 
 		await settings.promise
 		if (!settings.data.allow_guest_access) {
-			window.location.href = '/login'
+			const redirectTo = getLmsRoute(to.fullPath)
+			const query = new URLSearchParams({ 'redirect-to': redirectTo })
+			window.location.href = `/login?${query.toString()}`
 			return
 		}
 	}

@@ -1,6 +1,7 @@
 <template>
 	<TabbedDetailPage
 		ref="page"
+		class="course-management"
 		:tabs="tabs"
 		:breadcrumbs="breadcrumbs"
 		:published="Boolean(course.data?.published)"
@@ -11,14 +12,14 @@
 		<template #actions="{ tab }">
 			<template v-if="tab?.key === 'settings' && courseFormRef">
 				<Badge v-if="courseFormRef.isDirty" theme="amber">
-					{{ __('Not Saved') }}
+					{{ __('Sin guardar') }}
 				</Badge>
 				<Dropdown
 					:options="courseOptions"
 					:button="{
 						icon: 'lucide-ellipsis',
 						variant: 'ghost',
-						label: __('Course options'),
+						label: __('Opciones del curso'),
 					}"
 					side="bottom"
 					align="end"
@@ -30,56 +31,29 @@
 					:loading="publishToggle.loading"
 					@click="togglePublishCourse"
 				>
-					{{ course.data?.published ? __('Unpublish') : __('Publish') }}
+					{{ course.data?.published ? __('Despublicar') : __('Publicar') }}
 				</Button>
 				<Tooltip
 					v-if="!courseFormRef.isDirty"
-					:text="__('No changes to save')"
+					:text="__('No hay cambios que guardar')"
 					:hoverDelay="100"
 				>
-					<HeaderButton :label="__('Save')" variant="solid" disabled />
+					<HeaderButton :label="__('Guardar')" variant="solid" disabled />
 				</Tooltip>
-				<ShortcutTooltip v-else :label="__('Save')" combo="Mod+S">
+				<ShortcutTooltip v-else :label="__('Guardar')" combo="Mod+S">
 					<HeaderButton
-						:label="__('Save')"
+						:label="__('Guardar')"
 						variant="solid"
 						@click="courseFormRef.submitCourse()"
 					/>
 				</ShortcutTooltip>
 			</template>
 			<template v-if="tab?.key === 'editor' && editorSelected">
-				<Tooltip
-					v-if="courseEditorRef?.lessonHasVideo"
-					:text="__('Video Statistics')"
-				>
-					<Button
-						variant="ghost"
-						:label="__('Video Statistics')"
-						:class="isMobile ? '!size-9' : ''"
-						@click="courseEditorRef?.openVideoStats()"
-					>
-						<template #icon>
-							<span class="lucide-trending-up size-4" />
-						</template>
-					</Button>
-				</Tooltip>
-				<Tooltip v-if="!isMobile" :text="__('How to edit a lesson')">
-					<Button
-						variant="ghost"
-						class="text-p-base-medium"
-						:label="__('How to edit a lesson')"
-						@click="showLessonHelp = true"
-					>
-						<template #icon>
-							<span class="lucide-info size-4" />
-						</template>
-					</Button>
-				</Tooltip>
-				<Tooltip v-if="isMobile" :text="__('Student View')">
+				<Tooltip v-if="isMobile" :text="__('Vista del estudiante')">
 					<Button
 						variant="outline"
 						class="!size-9"
-						:label="__('Student View')"
+						:label="__('Vista del estudiante')"
 						:route="studentViewRoute"
 					>
 						<template #icon>
@@ -91,15 +65,15 @@
 					<template #prefix>
 						<span class="lucide-eye size-4" />
 					</template>
-					{{ __('Student View') }}
+					{{ __('Vista del estudiante') }}
 				</Button>
 			</template>
 			<Button
 				v-if="tab?.key === 'dashboard' && course.data && isMobile"
 				variant="outline"
 				class="!size-9"
-				:label="__('Enroll')"
-				:tooltip="__('Enroll')"
+				:label="__('Matricular')"
+				:tooltip="__('Matricular')"
 				@click="openEnrollForm()"
 			>
 				<template #icon>
@@ -114,7 +88,7 @@
 				<template #prefix>
 					<span class="lucide-plus size-4" />
 				</template>
-				{{ __('Enroll') }}
+				{{ __('Matricular') }}
 			</Button>
 		</template>
 
@@ -131,7 +105,7 @@
 				<Button
 					variant="subtle"
 					class="!size-9"
-					:label="__('Previous lesson')"
+					:label="__('Lección anterior')"
 					:disabled="!courseEditorRef?.hasPrev"
 					@click="courseEditorRef?.goPrev()"
 				>
@@ -150,7 +124,7 @@
 				<Button
 					variant="subtle"
 					class="!size-9"
-					:label="__('Next lesson')"
+					:label="__('Siguiente lección')"
 					:disabled="!courseEditorRef?.hasNext"
 					@click="courseEditorRef?.goNext()"
 				>
@@ -177,7 +151,7 @@
 				<template #prefix>
 					<span class="lucide-layers size-4" />
 				</template>
-				{{ __('Chapters') }}
+				{{ __('Módulos') }}
 			</Button>
 
 			<div
@@ -191,21 +165,18 @@
 					class="pointer-events-auto flex h-12 w-[30%] items-center justify-between gap-x-2 border-s border-b bg-surface-base px-5"
 				>
 					<div class="text-p-base-medium text-ink-gray-9">
-						{{ __('Chapters') }}
+						{{ __('Módulos') }}
 					</div>
 					<Button size="sm" @click="courseEditorRef?.openAddChapter()">
 						<template #prefix>
 							<span class="lucide-plus size-4" />
 						</template>
-						{{ __('Add') }}
+						{{ __('Agregar') }}
 					</Button>
 				</div>
 			</div>
 		</template>
 	</TabbedDetailPage>
-	<LessonHelp v-model="showLessonHelp" />
-
-	<router-view />
 </template>
 <script setup lang="ts">
 import { computed, inject, markRaw, ref, useTemplateRef, watch } from 'vue'
@@ -231,7 +202,6 @@ import SkeletonLoader from '@/components/SkeletonLoader.vue'
 import CourseDashboard from '@/pages/Courses/CourseDashboard.vue'
 import CourseEditor from '@/pages/Courses/CourseEditor.vue'
 import CourseForm from '@/pages/Courses/CourseForm.vue'
-import LessonHelp from '@/components/LessonHelp.vue'
 import ShortcutTooltip from '@/components/ShortcutTooltip.vue'
 import HeaderButton from '@/components/HeaderButton.vue'
 import { openFormRoute } from '@/composables/useFormRoute'
@@ -258,7 +228,6 @@ interface EditorSelection {
 }
 
 const editorSelected = ref<EditorSelection | null>(null)
-const showLessonHelp = ref(false)
 
 const studentViewRoute = computed(() => ({
 	name: 'Lesson',
@@ -290,8 +259,6 @@ const courseFormRef = computed<CourseFormApi | null>(
 type CourseEditorApi = {
 	saveSelectedLesson: () => void
 	isDirty: ComputedRef<boolean>
-	lessonHasVideo: ComputedRef<boolean>
-	openVideoStats: () => void
 	openAddChapter: () => void
 	lessonIndex: ComputedRef<number>
 	lessonTotal: ComputedRef<number>
@@ -315,12 +282,12 @@ const publishToggle = createResource({
 	},
 	onSuccess() {
 		toast.success(
-			course.data?.published ? __('Course unpublished') : __('Course published')
+			course.data?.published ? __('Curso despublicado') : __('Curso publicado')
 		)
 		course.reload()
 	},
 	onError(err: FrappeResourceError) {
-		const msg = err.messages?.[0] ?? __('Could not update publish status')
+		const msg = err.messages?.[0] ?? __('No se pudo actualizar el estado de publicación')
 		toast.error(msg)
 	},
 }) as Resource<unknown>
@@ -333,8 +300,8 @@ const courseOptions = computed<CourseMenuItem[]>(() => {
 	return [
 		{
 			label: course.data?.published
-				? __('Unpublish course')
-				: __('Publish course'),
+				? __('Despublicar curso')
+				: __('Publicar curso'),
 			icon: course.data?.published ? 'lucide-globe-lock' : 'lucide-globe',
 			onClick: () => togglePublishCourse(),
 		},
@@ -379,7 +346,7 @@ const course = createResource({
 const tabs = computed<DetailTab[]>(() => [
 	{
 		key: 'overview',
-		label: __('Overview'),
+		label: __('Resumen'),
 		component: markRaw(CourseOverview),
 		icon: 'lucide-list',
 		when: isAdmin.value,
@@ -388,14 +355,14 @@ const tabs = computed<DetailTab[]>(() => [
 	},
 	{
 		key: 'dashboard',
-		label: __('Dashboard'),
+		label: __('Panel'),
 		component: markRaw(CourseDashboard),
 		icon: 'lucide-trending-up',
 		when: isAdmin.value,
 	},
 	{
 		key: 'editor',
-		label: __('Course editor'),
+		label: __('Editor del curso'),
 		shortLabel: __('Editor'),
 		component: markRaw(CourseEditor),
 		icon: 'lucide-book-open',
@@ -403,7 +370,7 @@ const tabs = computed<DetailTab[]>(() => [
 	},
 	{
 		key: 'settings',
-		label: __('Settings'),
+		label: __('Configuración'),
 		component: markRaw(CourseForm),
 		icon: 'lucide-settings-2',
 		when: isAdmin.value,
@@ -444,7 +411,7 @@ const breadcrumbs = computed(() => {
 	const crumbs: {
 		label: string
 		route: { name: string; params?: Record<string, string> }
-	}[] = [{ label: __('Courses'), route: { name: 'Courses' } }]
+	}[] = [{ label: __('Cursos'), route: { name: 'Courses' } }]
 	if (course.data) {
 		crumbs.push({
 			label: course.data.title,
@@ -461,3 +428,18 @@ usePageMeta(() => {
 	}
 })
 </script>
+
+<style scoped>
+.course-management {
+	background: var(--lms-canvas, #f6f8f5);
+}
+
+.course-management :deep([role='tablist']) {
+	border-bottom: 1px solid #e1e9e3;
+	background: rgba(255, 255, 255, 0.8);
+}
+
+.course-management :deep([role='tab'][aria-selected='true']) {
+	color: #176b60;
+}
+</style>

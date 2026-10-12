@@ -1,13 +1,13 @@
 <template>
 	<section class="space-y-5 border-t pt-6">
 		<div class="text-base-semibold text-ink-gray-9">
-			{{ __('Course overview') }}
+			{{ __('Resumen del curso') }}
 		</div>
 		<div class="space-y-1.5">
 			<InputLabel
 				:id="descriptionLabelId"
 				:for-id="descriptionId"
-				:label="__('Course Description')"
+				:label="__('Descripción del curso')"
 				:required="true"
 			/>
 			<div
@@ -29,44 +29,34 @@
 				/>
 			</div>
 		</div>
-		<MultiLink
-			v-model="relatedCourses"
-			doctype="LMS Course"
-			:filters="{ name: ['!=', resource.doc?.name], published: 1 }"
-			:label="__('Related Courses')"
-			:placeholder="__('Select related courses')"
-			:emptyText="__('No other published courses available')"
-			variant="outline"
-			@update:modelValue="markDirty()"
-		/>
 	</section>
 
 	<section class="space-y-5 border-t pt-6">
 		<div>
 			<div class="text-base-semibold text-ink-gray-9">
-				{{ __('Meta Tags') }}
+				{{ __('Datos para buscadores') }}
 			</div>
 			<div class="mt-1 text-p-sm text-ink-gray-6">
 				{{
 					__(
-						'These tags help search engines describe and rank your course in results.'
+						'Estos datos ayudan a describir el curso en los resultados de búsqueda.'
 					)
 				}}
 			</div>
 		</div>
 		<FormControl
 			v-model="meta.description"
-			:label="__('Meta description')"
+			:label="__('Descripción para buscadores')"
 			type="textarea"
-			:placeholder="__('A short summary of the course for search results.')"
+			:placeholder="__('Escribe un resumen breve del curso para los resultados de búsqueda.')"
 			variant="outline"
 			@input="markDirty()"
 		/>
 		<FormControl
 			v-model="meta.keywords"
-			:label="__('Meta keywords')"
+			:label="__('Palabras clave')"
 			type="textarea"
-			:placeholder="__('Comma separated keywords for SEO')"
+			:placeholder="__('Palabras clave separadas por comas')"
 			variant="outline"
 			@input="markDirty()"
 		/>
@@ -76,12 +66,11 @@
 <script setup lang="ts">
 import { FormControl } from 'frappe-ui'
 import { computed, inject, useId } from 'vue'
-import MultiLink from '@/components/Controls/MultiLink.vue'
 import type { CourseFormContext } from '@/types'
 import RichTextEditor from '@/components/RichTextEditor.vue'
 import { InputLabel } from 'frappe-ui/experimental'
 
-const { resource, relatedCourses, meta, markDirty } =
+const { resource, meta, markDirty } =
 	inject<CourseFormContext>('courseForm')!
 const doc = computed(() => resource.doc)
 const descriptionId = useId()

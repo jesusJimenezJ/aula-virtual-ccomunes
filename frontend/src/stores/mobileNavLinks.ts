@@ -1,5 +1,4 @@
 import { ref } from 'vue'
-import { call } from 'frappe-ui'
 import { getSidebarLinks } from '@/utils'
 import { useSettings } from '@/stores/settings'
 import { isLinkEnabled, type NavLink } from '@/utils/mobileNav'
@@ -29,9 +28,6 @@ export interface MobileNavViewer {
 // Restates `utils/index.js`'s private `isAdmin()` rather than calling it: that
 // helper reads `usersStore()`, and this module is told who the viewer is so it
 // stays testable without a session. Keep the two on the same three roles.
-const canAssess = (viewer: MobileNavViewer): boolean =>
-	viewer.isModerator || viewer.isInstructor || viewer.isEvaluator
-
 export const sidebarLinks = ref<NavLink[]>([])
 export const otherLinks = ref<NavLink[]>([])
 
@@ -52,30 +48,6 @@ const addLink = (
 ): void => {
 	if (links.some((link) => link.label === label)) return
 	links.push({ label, icon, to })
-}
-
-// Programs is not admin-configurable; it is spliced in for anyone who can
-// reach one. Position 1 keeps it next to Courses.
-const addPrograms = async (
-	viewer: MobileNavViewer,
-	isCurrent: () => boolean
-): Promise<void> => {
-	if (sidebarLinks.value.some((link) => link.label === 'Programs')) return
-	if (!viewer.isSignedIn) return
-	if (!viewer.isModerator && !viewer.isInstructor) {
-		const programs = await call('lms.lms.utils.get_programs')
-		if (!isCurrent()) return
-		if (!programs.enrolled.length && !programs.published.length) return
-	}
-	// Asked again on the far side of the await: the list can have been replaced,
-	// and already carry Programs, while the call was in flight.
-	if (sidebarLinks.value.some((link) => link.label === 'Programs')) return
-	sidebarLinks.value.splice(1, 0, {
-		label: 'Programs',
-		icon: 'Route',
-		to: 'Programs',
-		activeFor: ['Programs', 'ProgramDetail'],
-	})
 }
 
 const addSessionLinks = (links: NavLink[], viewer: MobileNavViewer): void => {
@@ -102,27 +74,18 @@ export async function loadMobileNavLinks(
 
 	// Published before the first await so the bar starts populated; filtered and
 	// republished at the end.
-	sidebarLinks.value = (getSidebarLinks(true) as SidebarGroup[]).flatMap(
-		(group) => group.items ?? []
-	)
+	sidebarLinks.value = (getSidebarLinks(true) as SidebarGroup[])
+		.flatMap((group) => group.items ?? [])
+		.filter((link) => ['Inicio', 'Cursos'].includes(link.label))
 
 	await loadSidebarSettings()
 	if (!isCurrent()) return false
 	const visibility = sidebarSettings.data
 	if (!visibility) return false
 
-	await addPrograms(viewer, isCurrent)
-	if (!isCurrent()) return false
-
 	// Collected here and published once at the end, so the You page never shows a
 	// half-built group and a previous viewer's rows cannot survive into this run.
 	const others: NavLink[] = []
-
-	if (canAssess(viewer)) {
-		addLink(others, 'Quizzes', 'CircleHelp', 'Quizzes')
-		addLink(others, 'Assignments', 'Pencil', 'Assignments')
-		addLink(others, 'Programming Exercises', 'Code', 'ProgrammingExercises')
-	}
 
 	addSessionLinks(others, viewer)
 
@@ -136,7 +99,7 @@ export async function loadMobileNavLinks(
 		isLinkEnabled(link.label, visibility)
 
 	sidebarLinks.value = sidebarLinks.value.filter(isEnabled)
-	otherLinks.value = others.filter(isEnabled)
+	otherLinks.value = others.filter((link) => link.label === 'Profile')
 	return true
 }
 

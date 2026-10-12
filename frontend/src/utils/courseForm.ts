@@ -10,7 +10,6 @@ interface CourseValidationInput {
 		| 'description'
 		| 'short_introduction'
 		| 'paid_course'
-		| 'paid_certificate'
 		| 'currency'
 		| 'course_price'
 	> | null
@@ -42,9 +41,9 @@ export function validateCourse(input: CourseValidationInput): string | null {
 		return __('Add at least one {0} before saving.').format(__('Instructor'))
 	}
 
-	if (!doc.paid_course && !doc.paid_certificate) return null
+	if (!doc.paid_course) return null
 
-	const subject = doc.paid_course ? __('paid courses') : __('paid certificates')
+	const subject = __('cursos de pago')
 	if (!doc.currency) {
 		return __('Currency is required for {0}.').format(subject)
 	}

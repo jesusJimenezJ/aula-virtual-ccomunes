@@ -1,11 +1,10 @@
 <template>
-	<div v-if="lesson.data" class="">
+	<div v-if="lesson.data" class="lesson-experience">
 		<PageHeader :breadcrumbs="breadcrumbs">
 			<template #actions>
-				<CertificationLinks :courseName="courseName" />
 				<HeaderButton
 					v-if="canEditLesson"
-					:label="__('Editor View')"
+					:label="__('Vista del editor')"
 					icon="lucide-pencil"
 					:route="{
 						name: 'CourseDetail',
@@ -24,7 +23,7 @@
 			<Button
 				variant="subtle"
 				class="!size-9"
-				:label="__('Previous lesson')"
+				:label="__('Lección anterior')"
 				:disabled="!hasPrev"
 				@click="goPrev()"
 			>
@@ -41,7 +40,7 @@
 				v-if="canGoNext"
 				variant="subtle"
 				class="!size-9"
-				:label="__('Next lesson')"
+				:label="__('Siguiente lección')"
 				@click="goNext()"
 			>
 				<template #icon>
@@ -50,19 +49,19 @@
 			</Button>
 		</div>
 
-		<div class="grid md:grid-cols-[70%,30%] sm:h-[94vh]">
+		<div class="lesson-experience__layout grid md:grid-cols-[70%,30%] sm:h-[94vh]">
 			<div v-if="lesson.data.no_preview" class="sm:border-e">
 				<div class="shadow rounded-5 w-3/4 mt-10 mx-auto text-center p-4">
 					<div class="flex items-center justify-center mt-4 gap-x-2">
 						<span class="lucide-lock-keyhole size-4 text-ink-gray-5" />
 						<div class="text-lg-semibold text-ink-gray-7">
-							{{ __('This lesson is locked') }}
+							{{ __('Esta lección está bloqueada') }}
 						</div>
 					</div>
 					<div class="mt-1 mb-4 text-ink-gray-7">
 						{{
 							__(
-								'This lesson is not available for preview. Please enroll in the course to access it.'
+								'Esta lección no está disponible en la vista previa. Matricúlate en el curso para acceder.'
 							)
 						}}
 					</div>
@@ -71,7 +70,7 @@
 						@click="enrollStudent()"
 						variant="solid"
 					>
-						{{ __('Start Learning') }}
+						{{ __('Comenzar a aprender') }}
 					</Button>
 					<Badge
 						theme="blue"
@@ -79,13 +78,13 @@
 						v-else-if="lesson.data.disable_self_learning"
 						class="mt-2"
 					>
-						{{ __('Contact the Administrator to enroll for this course.') }}
+						{{ __('Contacta al equipo académico para matricularte en este curso.') }}
 					</Badge>
 					<Button v-else @click="redirectToLogin()">
 						<template #prefix>
 							<span class="lucide-log-in size-4" />
 						</template>
-						{{ __('Login') }}
+						{{ __('Iniciar sesión') }}
 					</Button>
 				</div>
 			</div>
@@ -143,8 +142,8 @@
 								v-if="!zenModeEnabled && !isMobile"
 								class="flex items-center gap-x-2 mt-2 md:mt-0"
 							>
-								<Tooltip v-if="canGoZen()" :text="__('Zen Mode')">
-									<Button @click="goFullScreen()" :label="__('Zen Mode')">
+				<Tooltip v-if="canGoZen()" :text="__('Modo de concentración')">
+					<Button @click="goFullScreen()" :label="__('Modo de concentración')">
 										<template #icon>
 											<span class="lucide-focus size-4" />
 										</template>
@@ -164,7 +163,7 @@
 							>
 								<Button
 									@click="showDiscussionsInZenMode()"
-									:label="__('Toggle discussions')"
+					:label="__('Mostrar u ocultar conversaciones')"
 								>
 									<template #icon>
 										<span class="lucide-message-circle-question size-4" />
@@ -206,7 +205,7 @@
 							class="bg-surface-gray-2 p-3 rounded-5 mt-6"
 						>
 							<h2 class="text-ink-gray-6 font-medium">
-								{{ __('Instructor Notes') }}
+								{{ __('Notas del instructor') }}
 							</h2>
 							<div
 								id="instructor-content"
@@ -233,12 +232,12 @@
 							</div>
 							<div class="flex min-w-0 flex-1 flex-col">
 								<span class="text-p-sm-medium text-ink-gray-8">
-									{{ __('This lesson could not be displayed') }}
+								{{ __('No se pudo mostrar esta lección') }}
 								</span>
 								<span class="text-p-sm text-ink-gray-6">
 									{{
 										__(
-											'Its content is stored in a form we cannot read. Reload the page, and tell your instructor if it keeps happening.'
+										'El contenido está guardado en un formato que no se puede leer. Recarga la página y avisa a tu instructor si el problema continúa.'
 										)
 									}}
 								</span>
@@ -288,7 +287,7 @@
 							:docname="lesson.data.name"
 							:key="lesson.data.name"
 							:emptyStateText="
-								__('Ask a question to get help from the community.')
+								__('Haz una pregunta para recibir ayuda de la comunidad.')
 							"
 						/>
 					</div>
@@ -317,7 +316,7 @@
 				<template #prefix>
 					<span class="lucide-layers size-4" />
 				</template>
-				{{ __('Chapters') }}
+								{{ __('Módulos') }}
 			</Button>
 		</div>
 
@@ -390,7 +389,6 @@ import LessonContent from '@/components/LessonContent.vue'
 import CourseInstructors from '@/components/CourseInstructors.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import Discussions from '@/components/Discussions.vue'
-import CertificationLinks from '@/components/CertificationLinks.vue'
 import CourseOutline from '@/components/CourseOutline.vue'
 import LockedLessonNotice from '@/components/LockedLessonNotice.vue'
 import LessonNavButtons from '@/components/LessonNavButtons.vue'
@@ -720,7 +718,7 @@ const notes = createListResource({
 })
 
 const breadcrumbs = computed(() => {
-	const crumbs: Crumb[] = [{ label: __('Courses'), route: { name: 'Courses' } }]
+		const crumbs: Crumb[] = [{ label: __('Cursos'), route: { name: 'Courses' } }]
 	crumbs.push({
 		label: lesson?.data?.course_title,
 		route: { name: 'CourseDetail', params: { courseName: props.courseName } },
@@ -1290,7 +1288,7 @@ watch(allowDiscussions, () => {
 	if (!isAdmin.value) {
 		if (!tabs.value.find((tab) => tab.value === 'Notes')) {
 			tabs.value.push({
-				label: __('Notes'),
+				label: __('Notas'),
 				value: 'Notes',
 			})
 		}
@@ -1301,7 +1299,7 @@ watch(allowDiscussions, () => {
 	if (allowDiscussions.value) {
 		if (!tabs.value.find((tab) => tab.value === 'Community')) {
 			tabs.value.push({
-				label: __('Community'),
+				label: __('Comunidad'),
 				value: 'Community',
 			})
 		}
@@ -1322,6 +1320,46 @@ usePageMeta(() => {
 })
 </script>
 <style>
+.lesson-experience {
+	min-height: 100vh;
+	background: #f6f8f5;
+}
+
+.lesson-experience__layout {
+	margin: 1rem 1.25rem 2rem;
+	overflow: hidden;
+	border: 1px solid #e1e9e3;
+	border-radius: 1.25rem;
+	background: #fff;
+	box-shadow: 0 8px 28px rgba(24, 49, 46, 0.06);
+}
+
+.lesson-experience__layout > aside {
+	border-inline-start: 1px solid #e8eee9;
+	background: #fbfcfa;
+}
+
+.lesson-experience .ProseMirror {
+	color: #354b45;
+	font-size: 1rem;
+	line-height: 1.8;
+}
+
+.lesson-experience .ProseMirror h1,
+.lesson-experience .ProseMirror h2,
+.lesson-experience .ProseMirror h3 {
+	color: #18312e;
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+@media (max-width: 767px) {
+	.lesson-experience__layout {
+		margin: 0.75rem;
+		border-radius: 1rem;
+	}
+}
+
 .avatar-group {
 	display: inline-flex;
 	align-items: center;

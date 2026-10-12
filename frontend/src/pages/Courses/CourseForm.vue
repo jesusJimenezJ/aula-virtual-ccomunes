@@ -8,6 +8,11 @@
 		<div class="space-y-8 p-5 md:overflow-y-auto">
 			<CourseDetailsSection />
 			<CourseOverviewSection />
+			<CourseDocuments
+				v-if="courseResource.doc?.name"
+				:courseName="courseResource.doc.name"
+				:canManage="true"
+			/>
 		</div>
 		<aside
 			class="border-t md:overflow-y-auto md:border-s md:border-t-0 md:px-3"
@@ -43,11 +48,11 @@ import {
 import { exportCourseAsZip } from '@/utils/exportCourse'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 import CourseDetailsSection from '@/components/Courses/CourseDetailsSection.vue'
+import CourseDocuments from '@/components/Courses/CourseDocuments.vue'
 import CourseOverviewSection from '@/components/Courses/CourseOverviewSection.vue'
 import CoursePublishSettings from '@/pages/Courses/CoursePublishSettings.vue'
 import type { LMSCourse } from '@/types/lms/LMSCourse'
 import type { CourseInstructor } from '@/types/lms/CourseInstructor'
-import type { RelatedCourses as RelatedCoursesRow } from '@/types/lms/RelatedCourses'
 import type {
 	CourseDetails,
 	CourseFormContext,
@@ -88,7 +93,6 @@ const { $dialog } = app.appContext.config.globalProperties as {
 
 const isDirty = ref<boolean>(false)
 const instructors = ref<string[]>([])
-const related_courses = ref<string[]>([])
 const meta = reactive<CourseFormMeta>({ description: '', keywords: '' })
 
 const courseResource = createDocumentResource({
@@ -138,7 +142,6 @@ const markDirty = (): void => {
 const courseFormContext: CourseFormContext = {
 	resource: courseResource,
 	instructors,
-	relatedCourses: related_courses,
 	meta,
 	markDirty,
 }
@@ -177,11 +180,6 @@ const updateCourseData = (): void => {
 			doc.instructors?.forEach((i: CourseInstructor) => {
 				if (i.instructor) instructors.value.push(i.instructor)
 			})
-		} else if (key === 'related_courses') {
-			related_courses.value = []
-			doc.related_courses?.forEach((c: RelatedCoursesRow) => {
-				if (c.course) related_courses.value.push(c.course)
-			})
 		}
 	})
 	const checkboxes: (keyof LMSCourse)[] = [
@@ -191,8 +189,6 @@ const updateCourseData = (): void => {
 		'enforce_lesson_completion',
 		'paid_course',
 		'featured',
-		'enable_certification',
-		'paid_certificate',
 	]
 	for (const key of checkboxes) {
 		;(doc as Record<string, unknown>)[key] = doc[key] ? true : false
@@ -221,12 +217,11 @@ const updateCourse = (opts: { silent?: boolean } = {}): void => {
 		{
 			...docFields,
 			instructors: instructors.value.map((i) => ({ instructor: i })),
-			related_courses: related_courses.value.map((c) => ({ course: c })),
 		},
 		{
 			onSuccess() {
 				updateMetaInfo('courses', courseResource.doc?.name, meta)
-				if (!opts.silent) toast.success(__('Course updated successfully'))
+				if (!opts.silent) toast.success(__('Curso actualizado correctamente'))
 				isDirty.value = false
 				courseResource.reload()
 				// Refresh the shared course resource so sibling tabs (Overview,
@@ -246,7 +241,7 @@ const deleteCourse = createResource({
 		return { course: courseResource.doc?.name }
 	},
 	onSuccess() {
-		toast.success(__('Course deleted successfully'))
+		toast.success(__('Curso eliminado correctamente'))
 		// Land on the creator's "Created" courses. Pick another course to edit.
 		router.push({ name: 'Courses', query: { tab: 'created' } })
 	},
@@ -257,13 +252,13 @@ const deleteCourse = createResource({
 
 const trashCourse = (): void => {
 	$dialog({
-		title: __('Delete Course'),
+		title: __('Eliminar curso'),
 		message: __(
 			'Deleting the course will also delete all its chapters and lessons. Are you sure you want to delete this course?'
 		),
 		actions: [
 			{
-				label: __('Delete'),
+				label: __('Eliminar'),
 				theme: 'red',
 				variant: 'solid',
 				onClick({ close }) {
@@ -282,7 +277,7 @@ const courseMenu = computed<CourseMenuItem[]>(() => [
 		onClick: () => exportCourseAsZip(courseResource.doc?.name),
 	},
 	{
-		label: __('Delete'),
+		label: __('Eliminar'),
 		icon: 'lucide-trash-2',
 		theme: 'red',
 		onClick: () => trashCourse(),

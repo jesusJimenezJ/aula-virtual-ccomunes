@@ -127,12 +127,18 @@ export function buildSidebarRows(
 ): SidebarRenderRow[] {
 	const items = flatten(links)
 	const groups = groupIndexes(links)
+	// Sprint 1 navigation: course access and catalog search. Keep other routes
+	// in the codebase for later sprints, but don't advertise them in this UI.
+	const sprintOneLabels = new Set(['Inicio', 'Buscar', 'Cursos'])
 
 	// Built-ins render in getSidebarItems() order, always. A row decides only
 	// whether one shows, through `isLinkEnabled`, never where it sits. This
 	// keeps the sidebar looking exactly as before, whatever order the rows are in.
 	const builtins: SidebarRenderRow[] = items
-		.filter((item) => isLinkEnabled(item.label, visibility))
+		.filter(
+			(item) =>
+				sprintOneLabels.has(item.label) && isLinkEnabled(item.label, visibility)
+		)
 		.map((item) => ({
 			kind: 'link' as const,
 			key: sidebarKey(item.label),
@@ -143,6 +149,7 @@ export function buildSidebarRows(
 	// the one "More" group at the end, in the order the rows carry.
 	const more = sidebarRowsIn(visibility)
 		.filter((row) => row.item_type !== 'Built-in' && isVisible(row))
+		.filter((row) => row.name1 === 'profile')
 		.map(renderLink)
 
 	return withGroupGaps(foldMore(builtins, more, builtins.length), groups)

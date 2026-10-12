@@ -1,136 +1,52 @@
 <template>
-	<div
-		v-if="course.title"
-		class="relative isolate flex flex-col h-full rounded-5 overflow-auto text-ink-gray-9 bg-surface-elevation-1"
-		style="min-height: 350px"
-	>
+	<article v-if="course.title" class="course-card group">
 		<div
-			class="w-[100%] h-[168px] bg-cover bg-center bg-no-repeat border-t border-x rounded-t-5"
+			class="course-card__cover"
 			:style="
 				course.image
 					? { backgroundImage: `url('${encodeURI(course.image)}')` }
-					: {
-							backgroundImage: gradientColor,
-							backgroundBlendMode: 'screen',
-					  }
+					: { backgroundImage: gradientColor }
 			"
 		>
-			<!-- <div class="flex items-center flex-wrap relative top-4 px-2 w-fit">
-				<div
-					v-if="course.featured"
-					class="flex items-center gap-x-1 text-xs text-ink-amber-5 bg-surface-base border border-outline-amber-1 px-2 py-0.5 rounded-5 me-1 mb-1"
-				>
-					<LucideStar class="size-3 stroke-2" />
-					<span>
-						{{ __('Featured') }}
-					</span>
-				</div>
-				<div
-					v-if="course.tags"
-					v-for="tag in course.tags?.split(', ')"
-					class="text-xs border bg-surface-base text-ink-gray-9 px-2 py-0.5 rounded-5 mb-1 me-1"
-				>
-					{{ tag }}
-				</div>
-			</div> -->
-			<div
-				v-if="!course.image"
-				class="flex items-center justify-center text-white flex-1 font-extrabold my-auto px-5 text-center leading-6 h-full"
-				:class="
-					course.title.length > 32
-						? 'text-lg'
-						: course.title.length > 20
-						? 'text-2xl'
-						: 'text-3xl'
-				"
-			>
-				<CardLink :to="to" :external="external">{{ course.title }}</CardLink>
+			<div class="course-card__cover-shade" />
+			<span v-if="course.category" class="course-card__category">
+				{{ course.category }}
+			</span>
+			<div v-if="!course.image" class="course-card__cover-mark" aria-hidden="true">
+				<span class="lucide-book-open size-8" />
 			</div>
 		</div>
-		<div class="flex flex-col flex-auto p-4 border-x-2 border-b-2 rounded-b-5">
-			<div class="flex items-center justify-between mb-2">
-				<div v-if="course.lessons">
-					<Tooltip :text="__('Lessons')">
-						<span class="relative z-10 flex items-center">
-							<span class="lucide-book-open size-4 me-1" aria-hidden="true" />
-							<span aria-hidden="true">{{ course.lessons }}</span>
-							<span class="sr-only">{{ lessonCount }}</span>
-						</span>
-					</Tooltip>
-				</div>
 
-				<div v-if="course.enrollments">
-					<Tooltip :text="__('Enrolled Students')">
-						<span class="relative z-10 flex items-center">
-							<span class="lucide-users size-4 me-1" aria-hidden="true" />
-							<span aria-hidden="true">
-								{{ formatAmount(course.enrollments) }}
-							</span>
-							<span class="sr-only">
-								{{
-									__('{0} enrolled').format(formatAmount(course.enrollments))
-								}}
-							</span>
-						</span>
-					</Tooltip>
-				</div>
-
-				<div v-if="course.rating">
-					<Tooltip :text="__('Average Rating')">
-						<span class="relative z-10 flex items-center">
-							<LucideStar
-								class="size-4 me-1 text-transparent fill-ink-amber-7"
-								aria-hidden="true"
-							/>
-							<span aria-hidden="true">{{ formatRating(course.rating) }}</span>
-							<span class="sr-only">
-								{{
-									__('Rated {0} out of 5').format(formatRating(course.rating))
-								}}
-							</span>
-						</span>
-					</Tooltip>
-				</div>
-
-				<Tooltip v-if="course.featured" :text="__('Featured')">
-					<span class="relative z-10 flex">
-						<span
-							class="lucide-award size-4 text-ink-amber-5"
-							aria-hidden="true"
-						/>
-						<span class="sr-only">{{ __('Featured') }}</span>
-					</span>
-				</Tooltip>
+		<div class="course-card__body">
+			<div class="course-card__stats">
+				<span v-if="course.lessons" class="course-card__stat">
+					<span class="lucide-book-open size-4" aria-hidden="true" />
+					{{ course.lessons }} {{ __('lecciones') }}
+				</span>
+				<span v-if="course.enrollments" class="course-card__stat">
+					<span class="lucide-users-round size-4" aria-hidden="true" />
+					{{ formatAmount(course.enrollments) }}
+				</span>
 			</div>
 
-			<div
-				v-if="course.image"
-				class="font-semibold leading-6"
-				:class="course.title.length > 32 ? 'text-lg' : 'text-2xl'"
-			>
+			<h3 class="course-card__title">
 				<CardLink :to="to" :external="external">{{ course.title }}</CardLink>
-			</div>
-
-			<div class="short-introduction text-sm">
+			</h3>
+			<p v-if="course.short_introduction" class="course-card__summary">
 				{{ course.short_introduction }}
+			</p>
+
+			<div v-if="user && course.membership" class="course-card__progress">
+				<ProgressBar
+					:progress="course.membership.progress"
+					:label="__('Course progress')"
+				/>
+				<span>{{ Math.ceil(course.membership.progress) }}% {{ __('completado') }}</span>
 			</div>
 
-			<ProgressBar
-				v-if="user && course.membership"
-				:progress="course.membership.progress"
-				:label="__('Course progress')"
-			/>
-
-			<div v-if="user && course.membership" class="text-sm mt-2 mb-4">
-				{{ Math.ceil(course.membership.progress) }}% {{ __('completed') }}
-			</div>
-
-			<div class="flex items-center justify-between mt-auto">
-				<div class="flex avatar-group overlap">
-					<div
-						class="relative z-10 h-6 me-1"
-						:class="{ 'avatar-group overlap': course.instructors.length > 1 }"
-					>
+			<div class="course-card__footer">
+				<div v-if="course.instructors?.length" class="course-card__instructor">
+					<div class="course-card__avatars">
 						<UserAvatar
 							v-for="instructor in course.instructors"
 							:key="instructor.username || instructor.name"
@@ -139,34 +55,17 @@
 					</div>
 					<CourseInstructors :instructors="course.instructors" />
 				</div>
-
-				<div class="flex items-center gap-x-2">
-					<div v-if="course.paid_course" class="font-semibold">
-						{{ course.price }}
-					</div>
-
-					<Tooltip
-						v-if="course.paid_certificate || course.enable_certification"
-						:text="__('Get Certified')"
-					>
-						<span class="relative z-10 flex">
-							<span
-								class="lucide-graduation-cap size-5 text-ink-gray-7"
-								aria-hidden="true"
-							/>
-							<span class="sr-only">{{ __('Get Certified') }}</span>
-						</span>
-					</Tooltip>
+				<div v-if="course.paid_course" class="course-card__price">
+					{{ course.price }}
 				</div>
 			</div>
 		</div>
-	</div>
+	</article>
 </template>
 <script setup>
 import { sessionStore } from '@/stores/session'
-import { Tooltip } from 'frappe-ui'
-import { formatAmount, formatRating } from '@/utils'
-import { computed, watch } from 'vue'
+import { formatAmount } from '@/utils'
+import { computed } from 'vue'
 import CardLink from '@/components/CardLink.vue'
 import CourseInstructors from '@/components/CourseInstructors.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
@@ -189,12 +88,6 @@ const props = defineProps({
 	},
 })
 
-const lessonCount = computed(() =>
-	props.course.lessons == 1
-		? __('1 lesson')
-		: __('{0} lessons').format(props.course.lessons)
-)
-
 const gradientColor = computed(() => {
 	let color = props.course.card_gradient?.toLowerCase() || 'blue'
 	// token-exempt: card art stays dark in both themes.
@@ -202,6 +95,190 @@ const gradientColor = computed(() => {
 })
 </script>
 <style>
+.course-card {
+	position: relative;
+	display: flex;
+	min-height: 100%;
+	flex-direction: column;
+	overflow: hidden;
+	border: 1px solid #e1e9e3;
+	border-radius: 1.1rem;
+	background: #fff;
+	color: #18312e;
+	box-shadow: 0 5px 18px rgba(24, 49, 46, 0.045);
+	transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.course-card:hover {
+	transform: translateY(-4px);
+	border-color: #c2d9ce;
+	box-shadow: 0 18px 38px rgba(24, 49, 46, 0.12);
+}
+
+.course-card__cover {
+	position: relative;
+	display: flex;
+	min-height: 10rem;
+	flex-direction: column;
+	justify-content: flex-end;
+	overflow: hidden;
+	background-position: center;
+	background-size: cover;
+	background-color: #176b60;
+}
+
+.course-card__cover-shade {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(180deg, rgba(11, 40, 35, 0.05) 12%, rgba(11, 40, 35, 0.76) 100%);
+	transition: opacity 180ms ease;
+}
+
+.course-card:hover .course-card__cover-shade {
+	opacity: 0.9;
+}
+
+.course-card__category {
+	position: absolute;
+	top: 0.9rem;
+	left: 0.9rem;
+	max-width: calc(100% - 1.8rem);
+	padding: 0.35rem 0.65rem;
+	border: 1px solid rgba(255, 255, 255, 0.55);
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.92);
+	color: #195348;
+	font-size: 0.7rem;
+	font-weight: 700;
+	line-height: 1.2;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.course-card__cover-mark {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	display: grid;
+	width: 4.6rem;
+	height: 4.6rem;
+	place-items: center;
+	border: 1px solid rgba(255, 255, 255, 0.42);
+	border-radius: 1.4rem;
+	background: rgba(255, 255, 255, 0.14);
+	color: #fff;
+	transform: translate(-50%, -58%) rotate(-7deg);
+	backdrop-filter: blur(6px);
+}
+
+.course-card__body {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	padding: 1rem 1.1rem 1.15rem;
+}
+
+.course-card__stats {
+	display: flex;
+	min-height: 1.5rem;
+	align-items: center;
+	gap: 0.9rem;
+	color: #61736c;
+	font-size: 0.75rem;
+}
+
+.course-card__stat {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.course-card__stat svg {
+	color: #176b60;
+}
+
+.course-card__title {
+	margin: 0.55rem 0 0;
+	color: #18312e;
+	font-size: 1.12rem;
+	font-weight: 700;
+	letter-spacing: -0.015em;
+	line-height: 1.35;
+}
+
+.course-card__title a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.course-card__title a:hover {
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.course-card__summary {
+	display: -webkit-box;
+	min-height: 3.4rem;
+	margin: 0.45rem 0 1rem;
+	overflow: hidden;
+	color: #5c6e67;
+	font-size: 0.88rem;
+	line-height: 1.55;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+.course-card__progress {
+	margin: auto 0 1rem;
+	color: #61736c;
+	font-size: 0.75rem;
+}
+
+.course-card__progress > span {
+	display: block;
+	margin-top: 0.35rem;
+}
+
+.course-card__footer {
+	display: flex;
+	min-height: 2rem;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin-top: auto;
+	padding-top: 0.8rem;
+	border-top: 1px solid #edf1ed;
+}
+
+.course-card__instructor,
+.course-card__avatars {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+}
+
+.course-card__instructor {
+	gap: 0.5rem;
+	color: #40574f;
+	font-size: 0.78rem;
+	font-weight: 600;
+}
+
+.course-card__avatars {
+	flex-shrink: 0;
+}
+
+.course-card__avatars > * + * {
+	margin-inline-start: -0.45rem;
+}
+
+.course-card__price {
+	color: #176b60;
+	font-size: 0.95rem;
+	font-weight: 750;
+}
+
 .avatar-group {
 	display: inline-flex;
 	align-items: center;
@@ -215,14 +292,4 @@ const gradientColor = computed(() => {
 	margin-inline-start: calc(-8px);
 }
 
-.short-introduction {
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	text-overflow: ellipsis;
-	width: 100%;
-	overflow: hidden;
-	margin: 0.25rem 0 1.25rem;
-	line-height: 1.5;
-}
 </style>

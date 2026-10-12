@@ -7,12 +7,12 @@
 					{{ avg_rating ? formatRating(avg_rating) : '0' }}
 				</span>
 				<span class="text-lg text-ink-gray-7">
-					{{ __('course rating') }} &amp;
+					{{ __('valoración del curso') }} ·
 					{{ reviews.data?.length || 0 }}
 					{{
 						(reviews.data?.length || 0) === 1
-							? __('user rating')
-							: __('user ratings')
+							? __('valoración')
+							: __('valoraciones')
 					}}
 				</span>
 			</div>
@@ -21,7 +21,7 @@
 				class="text-p-base-medium"
 				@click="openReviewModal()"
 			>
-				{{ __('Write a Review') }}
+				{{ __('Escribe una reseña') }}
 			</Button>
 		</div>
 
@@ -82,7 +82,7 @@
 						class="font-medium text-ink-gray-9 hover:underline mt-1"
 						@click="toggleExpand(review.name)"
 					>
-						{{ expanded[review.name] ? __('See less') : __('See more') }}
+						{{ expanded[review.name] ? __('Ver menos') : __('Ver más') }}
 					</button>
 				</div>
 			</article>
@@ -94,7 +94,7 @@
 				size="md"
 				@click="showAll = true"
 			>
-				{{ __('View all reviews') }}
+				{{ __('Ver todas las reseñas') }}
 			</Button>
 		</div>
 	</div>
@@ -190,13 +190,13 @@ function formatReviewDate(date: string) {
 	const d = dayjs(date)
 	const months = dayjs().diff(d, 'month')
 	if (months >= 1) {
-		return `${months} ${months === 1 ? __('month ago') : __('months ago')}`
+		return `Hace ${months} ${months === 1 ? 'mes' : 'meses'}`
 	}
 	const days = dayjs().diff(d, 'day')
 	if (days >= 1) {
-		return `${days} ${days === 1 ? __('day ago') : __('days ago')}`
+		return `Hace ${days} ${days === 1 ? 'día' : 'días'}`
 	}
-	return __('Today')
+	return __('Hoy')
 }
 
 function openReviewModal() {

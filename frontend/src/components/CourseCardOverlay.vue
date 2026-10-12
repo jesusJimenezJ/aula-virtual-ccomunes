@@ -1,5 +1,5 @@
 <template>
-	<div class="border-2 rounded-5 min-w-80 max-w-sm">
+	<div class="enrollment-panel min-w-80 max-w-sm">
 		<VideoPreview
 			:video-link="course.data?.video_link"
 			:fallback-image="course.data?.image"
@@ -31,10 +31,9 @@
 							<span class="lucide-book-text size-4" />
 						</template>
 						<span>
-							{{ __('Continue Learning') }}
+							{{ __('Continuar aprendiendo') }}
 						</span>
 					</Button>
-					<CertificationLinks :courseName="course.data.name" class="w-full" />
 				</div>
 				<Button
 					v-else-if="course.data?.paid_course && !isAdmin"
@@ -53,7 +52,7 @@
 						<span class="lucide-credit-card size-4" />
 					</template>
 					<span>
-						{{ __('Buy this course') }}
+						{{ __('Comprar este curso') }}
 					</span>
 				</Button>
 				<Badge
@@ -62,7 +61,7 @@
 					size="lg"
 					class="mb-4"
 				>
-					{{ __('Contact the Administrator to enroll for this course') }}
+					{{ __('Contacta con el equipo académico para matricularte') }}
 				</Badge>
 				<Button
 					v-else-if="!isAdmin"
@@ -75,39 +74,27 @@
 						<span class="lucide-book-text size-4" />
 					</template>
 					<span>
-						{{ __('Enroll Now') }}
+						{{ __('Matricularme') }}
 					</span>
-				</Button>
-				<Button
-					v-if="canGetCertificate"
-					@click="fetchCertificate()"
-					variant="subtle"
-					class="w-full mt-2"
-					size="md"
-				>
-					<template #prefix>
-						<span class="lucide-graduation-cap size-4" />
-					</template>
-					{{ __('Get Certificate') }}
 				</Button>
 			</div>
 			<section v-if="hasCourseStats" class="space-y-3">
 				<div class="text-base text-ink-gray-9 mb-1">
-					{{ __('This course includes:') }}
+				{{ __('Este curso incluye:') }}
 				</div>
 				<div
 					v-if="enrolledLabel"
 					class="flex items-center gap-3 text-ink-gray-8"
 				>
 					<span class="lucide-users size-4 shrink-0 text-ink-gray-7" />
-					<span>{{ enrolledLabel }} {{ __('enrolled') }}</span>
+					<span>{{ enrolledLabel }} {{ __('personas matriculadas') }}</span>
 				</div>
 				<div
 					v-if="course.data?.video_link"
 					class="flex items-center gap-3 text-ink-gray-8"
 				>
 					<span class="lucide-monitor-play size-4 shrink-0 text-ink-gray-7" />
-					<span>{{ __('On demand course video') }}</span>
+						<span>{{ __('Video del curso') }}</span>
 				</div>
 				<div
 					v-if="course.data?.lessons"
@@ -116,7 +103,7 @@
 					<span class="lucide-book-open size-4 shrink-0 text-ink-gray-7" />
 					<span>
 						{{ course.data?.lessons }}
-						{{ course.data?.lessons === 1 ? __('Lesson') : __('Lessons') }}
+						{{ course.data?.lessons === 1 ? 'lección' : 'lecciones' }}
 					</span>
 				</div>
 				<div
@@ -128,17 +115,10 @@
 						{{ course.data?.quiz_count }}
 						{{
 							course.data?.quiz_count === 1
-								? __('Quiz topic')
-								: __('Quiz topics')
+								? __('tema de cuestionario')
+								: __('temas de cuestionario')
 						}}
 					</span>
-				</div>
-				<div
-					v-if="course.data?.enable_certification"
-					class="flex items-center gap-3 text-ink-gray-8"
-				>
-					<span class="lucide-award size-4 shrink-0 text-ink-gray-7" />
-					<span>{{ __('Certificate of completion') }}</span>
 				</div>
 			</section>
 		</div>
@@ -146,14 +126,12 @@
 </template>
 <script setup lang="ts">
 import { computed, inject } from 'vue'
-import { Badge, Button, call, createResource, toast } from 'frappe-ui'
+import { Badge, Button, call, toast } from 'frappe-ui'
 import type { FrappeResourceError } from 'frappe-ui'
 import { resourceErrorMessage } from '@/utils/resource'
 import { useRouter } from 'vue-router'
-import CertificationLinks from '@/components/CertificationLinks.vue'
 import VideoPreview from '@/components/VideoPreview.vue'
 import { useTelemetry } from '@framework/ui/telemetry/index'
-import { openExternal } from '@/utils/openExternal'
 import type {
 	CourseDetails,
 	CourseInstructorInfo,
@@ -176,7 +154,7 @@ const props = withDefaults(
 
 function enrollStudent() {
 	if (!user.data) {
-		toast.warning(__('You need to login first to enroll for this course'))
+		toast.warning(__('Inicia sesión para matricularte en este curso'))
 		setTimeout(() => {
 			window.location.href = `/login?redirect-to=${window.location.pathname}`
 		}, 500)
@@ -193,7 +171,7 @@ function enrollStudent() {
 	})
 		.then(() => {
 			capture('enrolled_in_course', { course: courseName })
-			toast.success(__('You have been enrolled in this course'))
+			toast.success(__('Te has matriculado en este curso'))
 			setTimeout(() => {
 				router.push({
 					name: 'Lesson',
@@ -224,7 +202,7 @@ const is_instructor = (): boolean => {
 
 const priceLabel = computed<string>(() => {
 	if (props.course.data?.paid_course) return props.course.data?.price || ''
-	return __('Free')
+	return __('Gratis')
 })
 
 const enrolledLabel = computed<string>(() => {
@@ -240,42 +218,43 @@ const hasCourseStats = computed<boolean>(() =>
 		enrolledLabel.value ||
 			props.course.data?.video_link ||
 			props.course.data?.lessons ||
-			(props.course.data?.quiz_count ?? 0) > 0 ||
-			props.course.data?.enable_certification
+			(props.course.data?.quiz_count ?? 0) > 0
 	)
 )
-
-const canGetCertificate = computed<boolean>(() => {
-	return Boolean(
-		props.course.data?.enable_certification &&
-			(props.course.data?.membership?.progress ?? 0) >= 100
-	)
-})
-
-const certificate = createResource({
-	url: 'lms.lms.doctype.lms_certificate.lms_certificate.create_certificate',
-	makeParams(values: { course?: string }) {
-		return {
-			course: values.course,
-		}
-	},
-	onSuccess(data: { name: string; template: string }) {
-		openExternal(
-			`/api/method/frappe.utils.print_format.download_pdf?doctype=LMS+Certificate&name=${
-				data.name
-			}&format=${encodeURIComponent(data.template)}`
-		)
-	},
-}) as Resource<{ name: string; template: string } | null>
-
-const fetchCertificate = () => {
-	certificate.submit({
-		course: props.course.data?.name,
-		member: user.data?.name,
-	})
-}
 
 const isAdmin = computed<boolean>(() => {
 	return Boolean(user.data?.is_moderator) || is_instructor()
 })
 </script>
+
+<style scoped>
+.enrollment-panel {
+	border: 1px solid #dfe9e2;
+	border-radius: 1.1rem;
+	background: #fff;
+	box-shadow: 0 14px 34px rgba(24, 49, 46, 0.09);
+}
+
+.enrollment-panel > div:last-child {
+	padding: 1.2rem;
+}
+
+.enrollment-panel > div:last-child > div:first-child {
+	color: #18312e;
+	font-size: 1.8rem;
+	letter-spacing: -0.04em;
+}
+
+.enrollment-panel section {
+	padding-top: 1rem;
+	border-top: 1px solid #edf1ed;
+}
+
+@media (max-width: 767px) {
+	.enrollment-panel {
+		width: 100%;
+		min-width: 0;
+		max-width: none;
+	}
+}
+</style>

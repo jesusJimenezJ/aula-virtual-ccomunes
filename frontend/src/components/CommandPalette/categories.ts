@@ -11,13 +11,9 @@ export interface Category {
 }
 
 /**
- * Visibility is taken from the sidebar rather than restated here: a category is
- * offered when the sidebar is offering its page to this user. That covers the
- * authoring surfaces (Quizzes and Assignments are instructor/moderator/evaluator
- * only) and Programs, which is hidden from guests and from students with no
- * programs, and it cannot drift from the sidebar the way a second copy of the
- * rules would. Hiding a row is a convenience either way — `get_grouped_results`
- * is what actually withholds records.
+ * Course, evaluation and assignment search follow the same visibility rules as
+ * the navigation, so the command palette cannot expose a module outside the
+ * project's requirements.
  */
 export const CATEGORIES: Category[] = [
 	{
@@ -25,21 +21,7 @@ export const CATEGORIES: Category[] = [
 		label: 'Courses',
 		icon: 'lucide-book-open',
 		listRoute: 'Courses',
-	},
-	{
-		id: 'batches',
-		label: 'Batches',
-		icon: 'lucide-users',
-		listRoute: 'Batches',
-	},
-	{
-		id: 'programs',
-		label: 'Programs',
-		icon: 'lucide-route',
-		listRoute: 'Programs',
-	},
-	{ id: 'jobs', label: 'Jobs', icon: 'lucide-briefcase', listRoute: 'Jobs' },
-	{
+	},	{
 		id: 'quizzes',
 		label: 'Quizzes',
 		icon: 'lucide-circle-help',
@@ -114,24 +96,6 @@ export interface NavTarget {
  */
 export const NAV_TARGETS: NavTarget[] = [
 	{ id: 'home', label: 'Home', icon: 'lucide-home', route: 'Home' },
-	{
-		id: 'certifications',
-		label: 'Certifications',
-		icon: 'lucide-graduation-cap',
-		route: 'CertifiedParticipants',
-	},
-	{
-		id: 'statistics',
-		label: 'Statistics',
-		icon: 'lucide-trending-up',
-		route: 'Statistics',
-	},
-	{
-		id: 'programming-exercises',
-		label: 'Programming Exercises',
-		icon: 'lucide-code',
-		route: 'ProgrammingExercises',
-	},
 ]
 
 /** Nav targets whose page this user is being offered in the sidebar. */
