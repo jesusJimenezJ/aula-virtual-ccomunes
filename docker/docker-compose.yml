@@ -12,16 +12,17 @@ services:
     volumes:
       - mariadb-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -uroot -p${MARIADB_ROOT_PASSWORD} --silent"]
       interval: 5s
       timeout: 5s
-      retries: 30
+      retries: 20
+      start_period: 30s
   redis:
     image: redis:alpine
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
-      timeout: 3s
+      timeout: 5s
       retries: 20
   frappe:
     image: frappe/bench:latest
@@ -42,10 +43,8 @@ services:
       FRAPPE_BRANCH: ${FRAPPE_BRANCH:-develop}
     volumes:
       - ..:/workspace
-      - bench-data:/home/frappe/frappe-bench
     ports:
       - "127.0.0.1:${WEB_PORT:-8080}:8000"
       - "127.0.0.1:${SOCKETIO_PORT:-9000}:9000"
 volumes:
   mariadb-data:
-  bench-data:

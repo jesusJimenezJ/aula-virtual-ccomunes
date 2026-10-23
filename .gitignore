@@ -56,3 +56,20 @@ test-results
 playwright-report
 blob-report
 playwright/.auth
+
+# Seguridad: configuración privada y respaldos locales
+.github/helper/site_config.json
+**/site_config.json
+.env
+.env.*
+!.env.example
+backups/
+.audit_patch_backups/
+*.backup
+*.backup-*
+*.bak
+*.pre-recovery.bak
+/lms/public/node_modules/
+
+# Dependencias locales de Windows y enlaces de directorios
+lms/public/node_modules

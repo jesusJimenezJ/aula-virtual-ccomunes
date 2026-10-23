@@ -18,17 +18,26 @@
 		</div>
 
 		<div class="course-card__body">
-			<div class="course-card__stats">
-				<span v-if="course.lessons" class="course-card__stat">
-					<span class="lucide-book-open size-4" aria-hidden="true" />
-					{{ course.lessons }} {{ __('lecciones') }}
-				</span>
-				<span v-if="course.enrollments" class="course-card__stat">
-					<span class="lucide-users-round size-4" aria-hidden="true" />
-					{{ formatAmount(course.enrollments) }}
-				</span>
-			</div>
 
+			<div class="course-card__stats">
+                        <Tooltip v-if="course.lessons" :text="__('Cantidad de lecciones del curso')">
+                                <span class="course-card__stat">
+                                        <span class="lucide-book-open size-4" aria-hidden="true" />
+                                        <span aria-hidden="true">{{ course.lessons }} {{ __('lecciones') }}</span>
+                                        <span class="sr-only">{{ lessonCount }}</span>
+                                </span>
+                        </Tooltip>
+
+                        <Tooltip v-if="course.enrollments" :text="__('Cantidad de estudiantes matriculados')">
+                                <span class="course-card__stat">
+                                        <span class="lucide-users-round size-4" aria-hidden="true" />
+                                        <span aria-hidden="true">{{ formatAmount(course.enrollments) }}</span>
+                                        <span class="sr-only">
+                                                {{ __('Estudiantes matriculados: {0}').format(course.enrollments) }}
+                                        </span>
+                                </span>
+                        </Tooltip>
+                </div>
 			<h3 class="course-card__title">
 				<CardLink :to="to" :external="external">{{ course.title }}</CardLink>
 			</h3>
@@ -65,6 +74,7 @@
 <script setup>
 import { sessionStore } from '@/stores/session'
 import { formatAmount } from '@/utils'
+import { Tooltip } from 'frappe-ui'
 import { computed } from 'vue'
 import CardLink from '@/components/CardLink.vue'
 import CourseInstructors from '@/components/CourseInstructors.vue'
@@ -87,6 +97,12 @@ const props = defineProps({
 		default: false,
 	},
 })
+
+const lessonCount = computed(() =>
+  props.course.lessons == 1
+    ? __('1 lección')
+    : __('{0} lecciones').format(props.course.lessons)
+)
 
 const gradientColor = computed(() => {
 	let color = props.course.card_gradient?.toLowerCase() || 'blue'

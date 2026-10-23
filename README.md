@@ -16,7 +16,7 @@ Los siguientes comandos se ejecutan en una terminal Linux o en Ubuntu (WSL). En 
 ### 1. Clonar el proyecto
 
 ```bash
-git clone --branch sprint1/completo --single-branch https://github.com/williams-orneta/aula-virtual-ccomunes.git
+git clone --branch sprint1/completo --single-branch https://github.com/jesusJimenezJ/aula-virtual-ccomunes.git
 cd aula-virtual-ccomunes
 ```
 
